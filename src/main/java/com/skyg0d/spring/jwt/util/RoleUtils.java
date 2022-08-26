@@ -14,9 +14,6 @@ public class RoleUtils {
     }};
 
     public static ERole getRoleByString(String name) {
-        System.out.println(name);
-        System.out.println(roles.getOrDefault(name.toLowerCase(), ERole.ROLE_USER));
-
         return roles.getOrDefault(name.toLowerCase(), ERole.ROLE_USER);
     }
 

@@ -2,6 +2,7 @@ package com.skyg0d.spring.jwt.service;
 
 import com.skyg0d.spring.jwt.exception.TokenRefreshException;
 import com.skyg0d.spring.jwt.model.RefreshToken;
+import com.skyg0d.spring.jwt.model.User;
 import com.skyg0d.spring.jwt.repository.RefreshTokenRepository;
 import com.skyg0d.spring.jwt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.UUID;
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Value("${app.jwt.refreshExpirationMs}")
     private Long refreshTokenDurationMs;
@@ -28,10 +29,12 @@ public class RefreshTokenService {
     }
 
     public RefreshToken createRefreshToken(Long userId) {
+        User user = userService.findById(userId);
+
         RefreshToken refreshToken = RefreshToken
                 .builder()
                 .token(UUID.randomUUID().toString())
-                .user(userRepository.findById(userId).get())
+                .user(user)
                 .expiryDate(Instant.now().plusMillis(refreshTokenDurationMs))
                 .build();
 
@@ -39,8 +42,11 @@ public class RefreshTokenService {
     }
 
     public RefreshToken verifyExpiration(RefreshToken token) {
-        if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
+        boolean isTokenExpired = token.getExpiryDate().compareTo(Instant.now()) < 0;
+
+        if (isTokenExpired) {
             refreshTokenRepository.delete(token);
+
             throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new signin request");
         }
 
@@ -48,8 +54,8 @@ public class RefreshTokenService {
     }
 
     @Transactional
-    public int deleteByUserId(Long userId) {
-        return refreshTokenRepository.deleteByUser(userRepository.findById(userId).get());
+    public void deleteByUserId(Long userId) {
+        refreshTokenRepository.deleteByUser(userService.findById(userId));
     }
 
 }
