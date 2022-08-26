@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+  db:
+    image: mysql
+    container_name: jwt-mysql
+    environment:
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: testdb
+    ports:
+      - "3306:3306"
+    volumes:
+      - skyg0d_data:/var/lib/mysql
+
+volumes:
+  skyg0d_data:
