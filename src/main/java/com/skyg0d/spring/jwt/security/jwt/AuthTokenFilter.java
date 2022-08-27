@@ -1,8 +1,14 @@
 package com.skyg0d.spring.jwt.security.jwt;
 
+import com.skyg0d.spring.jwt.exception.details.ExceptionDetails;
+import com.skyg0d.spring.jwt.exception.details.TokenExpiredExceptionDetails;
 import com.skyg0d.spring.jwt.security.service.UserDetailsServiceImpl;
+import com.skyg0d.spring.jwt.util.ExceptionUtils;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -46,11 +52,31 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
 
-        } catch (Exception e) {
-            log.error("Cannot set user authentication: {}", e.getMessage());
-        }
+            filterChain.doFilter(request, response);
+        } catch (ExpiredJwtException ex) {
+            HttpStatus status = HttpStatus.UNAUTHORIZED;
 
-        filterChain.doFilter(request, response);
+            ExceptionDetails details = ExceptionDetails.createExceptionDetails(ex, status, "Unauthorized.");
+
+            TokenExpiredExceptionDetails tokenDetails = TokenExpiredExceptionDetails
+                    .builder()
+                    .title(details.getTitle())
+                    .details(details.getDetails())
+                    .status(status.value())
+                    .timestamp(details.getTimestamp())
+                    .developerMessage(details.getDeveloperMessage())
+                    .expired(true)
+                    .build();
+
+            response.setStatus(status.value());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.getWriter().write(ExceptionUtils.convertObjectToJson(tokenDetails));
+        } catch (
+                Exception e) {
+            log.error("Cannot set user authentication: {}", e.getMessage());
+
+            filterChain.doFilter(request, response);
+        }
     }
 
     private String parseJwt(HttpServletRequest request) {
