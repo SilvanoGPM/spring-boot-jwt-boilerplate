@@ -1,5 +1,6 @@
 package com.skyg0d.spring.jwt.handler;
 
+import com.skyg0d.spring.jwt.exception.BadRequestException;
 import com.skyg0d.spring.jwt.exception.ResourceNotFoundException;
 import com.skyg0d.spring.jwt.exception.TokenRefreshException;
 import com.skyg0d.spring.jwt.exception.UserAlreadyExistsException;
@@ -62,6 +63,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ExceptionDetails handleBadCredentialsException(BadCredentialsException ex) {
         return ExceptionDetails
                 .createExceptionDetails(ex, HttpStatus.BAD_REQUEST, "Bad Credentials");
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionDetails handleBadRequestException(BadRequestException ex) {
+        return ExceptionDetails
+                .createExceptionDetails(ex, HttpStatus.BAD_REQUEST, "Bad Request");
     }
 
     @ExceptionHandler(AccessDeniedException.class)
