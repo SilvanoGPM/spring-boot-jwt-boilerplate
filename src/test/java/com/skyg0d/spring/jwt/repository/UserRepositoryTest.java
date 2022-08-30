@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Optional;
 
+import static com.skyg0d.spring.jwt.util.user.UserCreator.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -21,23 +22,23 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("findByUsername returns user when successful")
     void findByUsername_ReturnsUser_WhenSuccessful() {
-        userRepository.save(UserCreator.createUserToBeSave());
+        userRepository.save(createUserToBeSave());
 
-        Optional<User> userFound = userRepository.findByUsername(UserCreator.createUserToBeSave().getUsername());
+        Optional<User> userFound = userRepository.findByUsername(createUserToBeSave().getUsername());
 
         assertThat(userFound).isNotEmpty();
 
         assertThat(userFound.get()).isNotNull();
 
-        assertThat(userFound.get().getUsername()).isEqualTo(UserCreator.createUserToBeSave().getUsername());
+        assertThat(userFound.get().getUsername()).isEqualTo(createUserToBeSave().getUsername());
     }
 
     @Test
     @DisplayName("existsByEmail returns true when email already exists")
     void existsByEmail_ReturnsTrue_WhenEmailAlreadyExists() {
-        userRepository.save(UserCreator.createUserToBeSave());
+        userRepository.save(createUserToBeSave());
 
-        boolean userExists = userRepository.existsByEmail(UserCreator.createUserToBeSave().getEmail());
+        boolean userExists = userRepository.existsByEmail(createUserToBeSave().getEmail());
 
         assertThat(userExists).isTrue();
     }
@@ -45,7 +46,7 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("existsByEmail returns true when email don't exists")
     void existsByEmail_ReturnsFalse_WhenEmailDoNotExists() {
-        boolean userExists = userRepository.existsByEmail(UserCreator.createUserToBeSave().getEmail());
+        boolean userExists = userRepository.existsByEmail(createUserToBeSave().getEmail());
 
         assertThat(userExists).isFalse();
     }
