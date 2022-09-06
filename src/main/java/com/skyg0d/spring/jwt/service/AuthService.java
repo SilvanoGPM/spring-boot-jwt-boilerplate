@@ -15,6 +15,7 @@ import com.skyg0d.spring.jwt.payload.response.TokenRefreshResponse;
 import com.skyg0d.spring.jwt.repository.UserRepository;
 import com.skyg0d.spring.jwt.security.jwt.JwtUtils;
 import com.skyg0d.spring.jwt.security.service.UserDetailsImpl;
+import eu.bitwalker.useragentutils.UserAgent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,7 +40,7 @@ public class AuthService {
     final JwtUtils jwtUtils;
     final RefreshTokenService refreshTokenService;
 
-    public JwtResponse signIn(LoginRequest loginRequest) {
+    public JwtResponse signIn(LoginRequest loginRequest, UserAgent userAgent, String ip) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginRequest.getUsername(),
                 loginRequest.getPassword()
@@ -56,7 +57,7 @@ public class AuthService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId(), userAgent, ip);
 
         return JwtResponse
                 .builder()
@@ -66,6 +67,7 @@ public class AuthService {
                 .token(jwt)
                 .refreshToken(refreshToken.getToken())
                 .roles(roles)
+
                 .build();
     }
 

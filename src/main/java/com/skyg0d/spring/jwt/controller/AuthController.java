@@ -9,11 +9,14 @@ import com.skyg0d.spring.jwt.payload.response.MessageResponse;
 import com.skyg0d.spring.jwt.payload.response.TokenRefreshResponse;
 import com.skyg0d.spring.jwt.security.service.UserDetailsImpl;
 import com.skyg0d.spring.jwt.service.AuthService;
+import com.skyg0d.spring.jwt.util.HttpUtils;
+import eu.bitwalker.useragentutils.UserAgent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.Principal;
 
@@ -26,8 +29,11 @@ public class AuthController {
     final AuthService authService;
 
     @PostMapping("/signin")
-    public ResponseEntity<JwtResponse> signIn(@Valid @RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(authService.signIn(loginRequest));
+    public ResponseEntity<JwtResponse> signIn(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest request) {
+        UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("User-Agent"));
+        String ipAddress = HttpUtils.getClientIp();
+
+        return ResponseEntity.ok(authService.signIn(loginRequest, userAgent, ipAddress));
     }
 
     @PostMapping("/signup")
