@@ -2,6 +2,7 @@ package com.skyg0d.spring.jwt.service;
 
 import com.skyg0d.spring.jwt.exception.TokenRefreshException;
 import com.skyg0d.spring.jwt.exception.UserAlreadyExistsException;
+import com.skyg0d.spring.jwt.model.ERole;
 import com.skyg0d.spring.jwt.model.RefreshToken;
 import com.skyg0d.spring.jwt.model.Role;
 import com.skyg0d.spring.jwt.model.User;
@@ -14,7 +15,6 @@ import com.skyg0d.spring.jwt.payload.response.TokenRefreshResponse;
 import com.skyg0d.spring.jwt.repository.UserRepository;
 import com.skyg0d.spring.jwt.security.jwt.JwtUtils;
 import com.skyg0d.spring.jwt.security.service.UserDetailsImpl;
-import com.skyg0d.spring.jwt.util.RoleUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,9 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -76,7 +74,7 @@ public class AuthService {
             throw new UserAlreadyExistsException(signUpRequest.getEmail());
         }
 
-        Set<Role> roles = getUserRoles(signUpRequest.getRole());
+        Set<Role> roles = Set.of(roleService.findByName(ERole.ROLE_USER));
 
         User user = User
                 .builder()
@@ -108,16 +106,6 @@ public class AuthService {
         refreshTokenService.deleteByUserId(userId);
 
         return new MessageResponse("Log out successful");
-    }
-
-    private Set<Role> getUserRoles(Set<String> roles) {
-        Optional<Set<String>> optionalRoles = Optional.ofNullable(roles);
-
-        return optionalRoles
-                .orElse(new HashSet<>(List.of("user")))
-                .stream()
-                .map((role) -> roleService.findByName(RoleUtils.getRoleByString(role)))
-                .collect(Collectors.toSet());
     }
 
 }

@@ -23,5 +23,5 @@ logging:
 app:
   jwt:
     secret: secretkey
-    expirationMs: 60000
-    refreshExpirationMs: 120000
+    expirationMs: 6000000
+    refreshExpirationMs: 1200000000

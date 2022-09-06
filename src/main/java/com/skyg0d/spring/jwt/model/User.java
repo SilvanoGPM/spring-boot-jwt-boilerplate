@@ -1,5 +1,6 @@
 package com.skyg0d.spring.jwt.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.persistence.*;
@@ -36,6 +37,7 @@ public class User {
 
     @NotBlank
     @Size(max = 150)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
