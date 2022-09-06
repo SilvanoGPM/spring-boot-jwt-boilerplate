@@ -6,6 +6,7 @@ import com.skyg0d.spring.jwt.payload.request.PromoteRequest;
 import com.skyg0d.spring.jwt.payload.response.MessageResponse;
 import com.skyg0d.spring.jwt.payload.response.UserTokenResponse;
 import com.skyg0d.spring.jwt.security.service.UserDetailsImpl;
+import com.skyg0d.spring.jwt.service.AuthService;
 import com.skyg0d.spring.jwt.service.RefreshTokenService;
 import com.skyg0d.spring.jwt.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,8 @@ import java.security.Principal;
 public class UserController {
 
     final UserService userService;
+
+    final AuthService authService;
     final RefreshTokenService refreshTokenService;
 
     @GetMapping
@@ -35,8 +38,14 @@ public class UserController {
     }
 
     @GetMapping("/tokens")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<Page<RefreshToken>> listMyAllTokens(Pageable pageable) {
+        return ResponseEntity.ok(refreshTokenService.listAll(pageable));
+    }
+
+    @GetMapping("/my/tokens")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public ResponseEntity<Page<UserTokenResponse>> listAllTokens(Pageable pageable, Principal principal) {
+    public ResponseEntity<Page<UserTokenResponse>> listMyAllTokens(Pageable pageable, Principal principal) {
         UserDetailsImpl userDetails = (UserDetailsImpl) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
 
         return ResponseEntity.ok(refreshTokenService.listAllByUser(pageable, userDetails.getId()));
@@ -46,6 +55,12 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MessageResponse> promote(@Valid @RequestBody PromoteRequest request) {
         return ResponseEntity.ok(userService.promote(request.getUserId(), request.getRoles()));
+    }
+
+    @DeleteMapping("/logout/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<MessageResponse> logout(@PathVariable Long userId) {
+        return ResponseEntity.ok(authService.logout(userId));
     }
 
 }

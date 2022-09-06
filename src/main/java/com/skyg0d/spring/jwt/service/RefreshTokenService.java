@@ -28,6 +28,10 @@ public class RefreshTokenService {
     @Value("${app.jwt.refreshExpirationMs}")
     private Long refreshTokenDurationMs;
 
+    public Page<RefreshToken> listAll(Pageable pageable) {
+        return refreshTokenRepository.findAll(pageable);
+    }
+
     public Page<UserTokenResponse> listAllByUser(Pageable pageable, Long userId) {
         User user = userService.findById(userId);
 
