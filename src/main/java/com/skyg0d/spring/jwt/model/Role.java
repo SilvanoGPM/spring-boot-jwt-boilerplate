@@ -1,21 +1,18 @@
 package com.skyg0d.spring.jwt.model;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "roles")
-@Builder
-@AllArgsConstructor
+@SuperBuilder
 @NoArgsConstructor
+@ToString(callSuper = true)
 @Getter
 @Setter
-public class Role {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+@Entity
+@Table(name = "roles")
+public class Role extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private ERole name;

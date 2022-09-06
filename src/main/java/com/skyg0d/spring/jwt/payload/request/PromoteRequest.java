@@ -10,6 +10,6 @@ import java.util.Set;
 public class PromoteRequest {
 
     private Set<String> roles;
-    private Long userId;
+    private String userId;
 
 }

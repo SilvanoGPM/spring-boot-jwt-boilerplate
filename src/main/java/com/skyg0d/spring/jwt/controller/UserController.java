@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.UUID;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -39,7 +40,7 @@ public class UserController {
 
     @GetMapping("/tokens")
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
-    public ResponseEntity<Page<RefreshToken>> listMyAllTokens(Pageable pageable) {
+    public ResponseEntity<Page<RefreshToken>> listAllTokens(Pageable pageable) {
         return ResponseEntity.ok(refreshTokenService.listAll(pageable));
     }
 
@@ -54,12 +55,12 @@ public class UserController {
     @PatchMapping("/promote")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MessageResponse> promote(@Valid @RequestBody PromoteRequest request) {
-        return ResponseEntity.ok(userService.promote(request.getUserId(), request.getRoles()));
+        return ResponseEntity.ok(userService.promote(UUID.fromString(request.getUserId()), request.getRoles()));
     }
 
     @DeleteMapping("/logout/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<MessageResponse> logout(@PathVariable Long userId) {
+    public ResponseEntity<MessageResponse> logout(@PathVariable UUID userId) {
         return ResponseEntity.ok(authService.logout(userId));
     }
 

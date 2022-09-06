@@ -1,21 +1,19 @@
 package com.skyg0d.spring.jwt.model;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.time.Instant;
 
-@Builder
-@Entity(name = "refreshtoken")
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
+@ToString(callSuper = true)
 @Setter
 @Getter
-public class RefreshToken {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+@Entity(name = "refreshtoken")
+public class RefreshToken extends BaseEntity {
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")

@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,7 +62,7 @@ public class AuthService {
 
         return JwtResponse
                 .builder()
-                .id(userDetails.getId())
+                .id(userDetails.getId().toString())
                 .email(userDetails.getEmail())
                 .username(userDetails.getUsername())
                 .token(jwt)
@@ -104,7 +105,7 @@ public class AuthService {
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
     }
 
-    public MessageResponse logout(Long userId) {
+    public MessageResponse logout(UUID userId) {
         refreshTokenService.deleteByUserId(userId);
 
         return new MessageResponse("Log out successful");

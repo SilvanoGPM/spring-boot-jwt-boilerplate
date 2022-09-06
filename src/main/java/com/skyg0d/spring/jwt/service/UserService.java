@@ -11,10 +11,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,13 +28,13 @@ public class UserService {
         return userRepository.findAll(pageable);
     }
 
-    public User findById(Long id) throws ResourceNotFoundException {
+    public User findById(UUID id) throws ResourceNotFoundException {
         return userRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
     }
 
-    public MessageResponse promote(Long userId, Set<String> roles) {
+    public MessageResponse promote(UUID userId, Set<String> roles) {
         User user = findById(userId);
 
         user.setRoles(getUserRoles(roles));

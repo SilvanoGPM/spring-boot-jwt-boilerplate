@@ -5,7 +5,6 @@ import com.skyg0d.spring.jwt.model.RefreshToken;
 import com.skyg0d.spring.jwt.model.User;
 import com.skyg0d.spring.jwt.payload.response.UserTokenResponse;
 import com.skyg0d.spring.jwt.repository.RefreshTokenRepository;
-import com.skyg0d.spring.jwt.repository.UserRepository;
 import eu.bitwalker.useragentutils.UserAgent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +31,7 @@ public class RefreshTokenService {
         return refreshTokenRepository.findAll(pageable);
     }
 
-    public Page<UserTokenResponse> listAllByUser(Pageable pageable, Long userId) {
+    public Page<UserTokenResponse> listAllByUser(Pageable pageable, UUID userId) {
         User user = userService.findById(userId);
 
         return refreshTokenRepository.findAllByUser(pageable, user).map((UserTokenResponse::new));
@@ -42,7 +41,7 @@ public class RefreshTokenService {
         return refreshTokenRepository.findByToken(token);
     }
 
-    public RefreshToken createRefreshToken(Long userId, UserAgent userAgent, String ip) {
+    public RefreshToken createRefreshToken(UUID userId, UserAgent userAgent, String ip) {
         User user = userService.findById(userId);
 
         RefreshToken refreshToken = RefreshToken
@@ -71,7 +70,7 @@ public class RefreshTokenService {
     }
 
     @Transactional
-    public void deleteByUserId(Long userId) {
+    public void deleteByUserId(UUID userId) {
         refreshTokenRepository.deleteByUser(userService.findById(userId));
     }
 

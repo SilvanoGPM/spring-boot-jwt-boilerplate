@@ -1,10 +1,9 @@
 package com.skyg0d.spring.jwt.util;
 
 import com.skyg0d.spring.jwt.model.ERole;
-import com.skyg0d.spring.jwt.model.Role;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RoleUtils {
 
@@ -17,7 +16,6 @@ public class RoleUtils {
     public static ERole getRoleByString(String name) {
         return roles.getOrDefault(name.toLowerCase(), ERole.ROLE_USER);
     }
-
 
 
 }
