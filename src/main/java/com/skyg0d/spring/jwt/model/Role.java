@@ -1,13 +1,13 @@
 package com.skyg0d.spring.jwt.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "roles")
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter

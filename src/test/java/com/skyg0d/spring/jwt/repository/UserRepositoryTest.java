@@ -1,7 +1,6 @@
 package com.skyg0d.spring.jwt.repository;
 
 import com.skyg0d.spring.jwt.model.User;
-import com.skyg0d.spring.jwt.util.user.UserCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
