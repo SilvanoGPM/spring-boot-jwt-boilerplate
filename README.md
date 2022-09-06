@@ -1,6 +1,10 @@
 <h1 align="center">Spring Boot JWT Boilerplate</h1>
 <p align="center">SpringBoot Boilerplate with JWT Refresh Token</p>
 
+<p align="center">
+    <img src="./.github/spring-boot-jwt-logo.png" width="120" />
+</p>
+
 ## :wrench: How to use?
 
 ### :mag_right: Requirements:
