@@ -1,5 +1,6 @@
 package com.skyg0d.spring.jwt.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
@@ -25,13 +26,16 @@ public class BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Type(type = "uuid-char")
     @Column(name = "id", columnDefinition = "VARCHAR(255)", insertable = false, updatable = false, nullable = false)
+    @Schema(description = "Entity identification")
     private UUID id;
 
     @Column(updatable = false)
     @CreationTimestamp
+    @Schema(description = "Entity creation time")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
+    @Schema(description = "Entity update time")
     private LocalDateTime updatedAt;
 
     @Override

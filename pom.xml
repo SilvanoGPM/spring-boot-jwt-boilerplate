@@ -2,6 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -11,16 +12,20 @@
 
 	<groupId>com.skyg0d</groupId>
 	<artifactId>spring-boot-jwt</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-
+	<version>1.0.0</version>
 	<name>spring-boot-jwt</name>
 	<description>SpringBoot Boilerplate with JWT Refresh Token</description>
 
 	<properties>
 		<java.version>11</java.version>
+		<springdoc.version>1.6.11</springdoc.version>
+		<jjwt.version>0.9.1</jjwt.version>
+		<UserAgentUtils.version>1.21</UserAgentUtils.version>
 	</properties>
 
 	<dependencies>
+		<!-- spring dependencies -->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -48,6 +53,8 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
+		<!-- others dependencies -->
+
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -63,13 +70,13 @@
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
-			<version>0.9.1</version>
+			<version>${jjwt.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>eu.bitwalker</groupId>
 			<artifactId>UserAgentUtils</artifactId>
-			<version>1.21</version>
+			<version>${UserAgentUtils.version}</version>
 		</dependency>
 
 		<!-- test dependencies -->
@@ -90,6 +97,26 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<!-- docs dependencies -->
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>${springdoc.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-data-rest</artifactId>
+			<version>${springdoc.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-security</artifactId>
+			<version>${springdoc.version}</version>
 		</dependency>
 	</dependencies>
 

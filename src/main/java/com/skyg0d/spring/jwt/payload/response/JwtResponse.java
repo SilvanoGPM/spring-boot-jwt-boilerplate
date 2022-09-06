@@ -1,5 +1,6 @@
 package com.skyg0d.spring.jwt.payload.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,8 +13,11 @@ import java.util.List;
 @Builder
 public class JwtResponse {
 
+    @Schema(description = "Token to access protected endpoints")
     private String token;
+    @Schema(description = "Type of token")
     private String type = "Bearer";
+    @Schema(description = "Token to generate others access tokens")
     private String refreshToken;
     private String id;
     private String username;
