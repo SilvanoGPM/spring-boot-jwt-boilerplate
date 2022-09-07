@@ -23,7 +23,7 @@ Everything must be working properly.
 
 ### :gear: Default Config
 
-By default an admin user will be created when the users table is empty with this data:
+By default, an admin user will be created when the users table is empty with this data:
 
 
 ```json

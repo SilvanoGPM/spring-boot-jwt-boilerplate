@@ -7,6 +7,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.HashSet;
 import java.util.List;
@@ -76,6 +78,35 @@ public class RefreshTokenRepositoryTest {
         long totalOfUsers = refreshTokenRepository.count();
 
         assertThat(totalOfUsers).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("findAllByUser Removes Refresh Token When Successful")
+    void findAllByUser_ReturnsListOfRefreshTokenInsidePageObject_WhenSuccessful() {
+        User userToBeSave = createRefreshTokenToBeSave().getUser();
+
+        List<Role> roles = roleRepository.saveAll(userToBeSave.getRoles());
+
+        userToBeSave.setRoles(new HashSet<>(roles));
+
+        User userSaved = userRepository.save(userToBeSave);
+
+        RefreshToken tokenToBeSave = createRefreshTokenToBeSave();
+
+        tokenToBeSave.setUser(userSaved);
+
+        RefreshToken tokenSaved = refreshTokenRepository.save(tokenToBeSave);
+
+        Page<RefreshToken> usersPage = refreshTokenRepository
+                .findAllByUser(PageRequest.of(0, 1), tokenSaved.getUser());
+
+        assertThat(usersPage).isNotEmpty();
+
+        assertThat(usersPage.getContent()).isNotEmpty();
+
+        assertThat(usersPage.getContent().get(0)).isNotNull();
+
+        assertThat(usersPage.getContent().get(0).getUser()).isEqualTo(tokenSaved.getUser());
     }
 
 }

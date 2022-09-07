@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.HashSet;
 import java.util.Optional;
 
 import static com.skyg0d.spring.jwt.util.user.UserCreator.*;
@@ -18,10 +19,17 @@ public class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    RoleRepository roleRepository;
+
     @Test
     @DisplayName("findByUsername returns user when successful")
     void findByUsername_ReturnsUser_WhenSuccessful() {
-        userRepository.save(createUserToBeSave());
+        User userToBeSave = createUserToBeSave();
+
+        userToBeSave.setRoles(new HashSet<>(roleRepository.saveAll(userToBeSave.getRoles())));
+
+        userRepository.save(userToBeSave);
 
         Optional<User> userFound = userRepository.findByUsername(createUserToBeSave().getUsername());
 
@@ -35,7 +43,11 @@ public class UserRepositoryTest {
     @Test
     @DisplayName("existsByEmail returns true when email already exists")
     void existsByEmail_ReturnsTrue_WhenEmailAlreadyExists() {
-        userRepository.save(createUserToBeSave());
+        User userToBeSave = createUserToBeSave();
+
+        userToBeSave.setRoles(new HashSet<>(roleRepository.saveAll(userToBeSave.getRoles())));
+
+        userRepository.save(userToBeSave);
 
         boolean userExists = userRepository.existsByEmail(createUserToBeSave().getEmail());
 
