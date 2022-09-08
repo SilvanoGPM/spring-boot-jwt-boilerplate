@@ -9,14 +9,30 @@ import java.util.UUID;
 
 public class UserCreator {
 
+    public static final UUID uuid = UUID.fromString("eaf90e2e-ebe7-4c60-8a16-d7f4aa14b730");
+    public static final String username = "SkyG0D";
+    public static final String email = "test@mail.com";
+    public static final String password = "password";
+    public static final Set<Role> roles = Set.of(new Role(ERole.ROLE_USER));
+
     public static User createUserToBeSave() {
         return User
                 .builder()
-                .id(UUID.fromString("eaf90e2e-ebe7-4c60-8a16-d7f4aa14b730"))
-                .username("SkyG0D")
-                .email("test@mail.com")
-                .password("password")
-                .roles(Set.of(new Role(ERole.ROLE_USER)))
+                .username(username)
+                .email(email)
+                .password(password)
+                .roles(roles)
+                .build();
+    }
+
+    public static User createUser() {
+        return User
+                .builder()
+                .id(uuid)
+                .username(username)
+                .email(email)
+                .password(password)
+                .roles(roles)
                 .build();
     }
 
