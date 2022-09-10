@@ -6,6 +6,7 @@ import com.skyg0d.spring.jwt.model.ERole;
 import com.skyg0d.spring.jwt.model.RefreshToken;
 import com.skyg0d.spring.jwt.model.Role;
 import com.skyg0d.spring.jwt.model.User;
+import com.skyg0d.spring.jwt.payload.UserMachineDetails;
 import com.skyg0d.spring.jwt.payload.request.LoginRequest;
 import com.skyg0d.spring.jwt.payload.request.SignupRequest;
 import com.skyg0d.spring.jwt.payload.request.TokenRefreshRequest;
@@ -58,7 +59,14 @@ public class AuthService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId(), userAgent, ip);
+        UserMachineDetails userMachineDetails = UserMachineDetails
+                .builder()
+                .ipAddress(ip)
+                .browser(userAgent.getBrowser().getName())
+                .operatingSystem(userAgent.getOperatingSystem().getName())
+                .build();
+
+        RefreshToken refreshToken = refreshTokenService.create(userDetails.getId(), userMachineDetails);
 
         return JwtResponse
                 .builder()

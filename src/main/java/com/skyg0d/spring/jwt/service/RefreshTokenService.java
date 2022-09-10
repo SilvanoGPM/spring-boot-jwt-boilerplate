@@ -3,9 +3,9 @@ package com.skyg0d.spring.jwt.service;
 import com.skyg0d.spring.jwt.exception.TokenRefreshException;
 import com.skyg0d.spring.jwt.model.RefreshToken;
 import com.skyg0d.spring.jwt.model.User;
+import com.skyg0d.spring.jwt.payload.UserMachineDetails;
 import com.skyg0d.spring.jwt.payload.response.UserTokenResponse;
 import com.skyg0d.spring.jwt.repository.RefreshTokenRepository;
-import eu.bitwalker.useragentutils.UserAgent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -24,8 +24,8 @@ public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserService userService;
 
-    @Value("${app.jwt.refreshExpirationMs}")
-    private Long refreshTokenDurationMs;
+    @Value("${app.jwt.refreshExpirationMs: #{0L}}")
+    private Long refreshTokenDurationMs = 0L;
 
     public Page<RefreshToken> listAll(Pageable pageable) {
         return refreshTokenRepository.findAll(pageable);
@@ -41,7 +41,7 @@ public class RefreshTokenService {
         return refreshTokenRepository.findByToken(token);
     }
 
-    public RefreshToken createRefreshToken(UUID userId, UserAgent userAgent, String ip) {
+    public RefreshToken create(UUID userId, UserMachineDetails userMachineDetails) {
         User user = userService.findById(userId);
 
         RefreshToken refreshToken = RefreshToken
@@ -49,9 +49,9 @@ public class RefreshTokenService {
                 .token(UUID.randomUUID().toString())
                 .user(user)
                 .expiryDate(Instant.now().plusMillis(refreshTokenDurationMs))
-                .ipAddress(ip)
-                .browser(userAgent.getBrowser().getName())
-                .operatingSystem(userAgent.getOperatingSystem().getName())
+                .ipAddress(userMachineDetails.getIpAddress())
+                .browser(userMachineDetails.getBrowser())
+                .operatingSystem(userMachineDetails.getOperatingSystem())
                 .build();
 
         return refreshTokenRepository.save(refreshToken);
