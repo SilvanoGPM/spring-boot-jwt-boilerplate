@@ -56,6 +56,10 @@ app:
     refreshExpirationMs: 2592000000 # 30 days
 ```
 
+## 🌐 Authentication Flow
+
+<img width="1648" alt="JWT Authentication Flow" src="https://user-images.githubusercontent.com/59753526/190884844-764e5af1-1894-4573-b689-c2f3c11331a7.png">
+
 ## :rocket: Technologies
 
 * [Spring Boot](https://spring.io/projects/spring-boot)
