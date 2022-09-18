@@ -1,11 +1,13 @@
 package com.skyg0d.spring.jwt.payload.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class TokenRefreshResponse {
 
     @Schema(description = "New token generated")

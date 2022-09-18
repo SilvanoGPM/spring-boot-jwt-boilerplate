@@ -1,6 +1,7 @@
 package com.skyg0d.spring.jwt.controller;
 
 import com.skyg0d.spring.jwt.exception.BadRequestException;
+import com.skyg0d.spring.jwt.payload.UserMachineDetails;
 import com.skyg0d.spring.jwt.payload.request.LoginRequest;
 import com.skyg0d.spring.jwt.payload.request.SignupRequest;
 import com.skyg0d.spring.jwt.payload.request.TokenRefreshRequest;
@@ -42,7 +43,14 @@ public class AuthController {
         UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("User-Agent"));
         String ipAddress = HttpUtils.getClientIp();
 
-        return ResponseEntity.ok(authService.signIn(loginRequest, userAgent, ipAddress));
+        UserMachineDetails userMachineDetails = UserMachineDetails
+                .builder()
+                .ipAddress(ipAddress)
+                .browser(userAgent.getBrowser().getName())
+                .operatingSystem(userAgent.getOperatingSystem().getName())
+                .build();
+
+        return ResponseEntity.ok(authService.signIn(loginRequest, userMachineDetails));
     }
 
     @PostMapping("/signup")

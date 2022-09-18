@@ -11,7 +11,7 @@ import java.util.UUID;
 public class RefreshTokenCreator {
 
     public static final UUID ID = UUID.fromString("b11b35d6-ad2c-4aa9-87b4-a58cea010f0a");
-    public static final String TOKEN = "token-test";
+    public static final String TOKEN = "refresh-token-test";
     public static final Instant EXPIRY_DATE = Instant.now().plus(1, ChronoUnit.HOURS);
     public static final User USER = UserCreator.createUserToBeSave();
 

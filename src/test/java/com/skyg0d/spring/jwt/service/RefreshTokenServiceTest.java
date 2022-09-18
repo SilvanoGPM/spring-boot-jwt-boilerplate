@@ -3,10 +3,8 @@ package com.skyg0d.spring.jwt.service;
 import com.skyg0d.spring.jwt.exception.TokenRefreshException;
 import com.skyg0d.spring.jwt.model.RefreshToken;
 import com.skyg0d.spring.jwt.model.User;
-import com.skyg0d.spring.jwt.payload.UserMachineDetails;
 import com.skyg0d.spring.jwt.payload.response.UserTokenResponse;
 import com.skyg0d.spring.jwt.repository.RefreshTokenRepository;
-import com.skyg0d.spring.jwt.util.token.RefreshTokenCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.skyg0d.spring.jwt.util.GenericCreator.createUserMachineDetails;
 import static com.skyg0d.spring.jwt.util.token.RefreshTokenCreator.createRefreshToken;
 import static org.assertj.core.api.Assertions.*;
 
@@ -121,14 +120,7 @@ public class RefreshTokenServiceTest {
     void create_PersistsRefreshToken_WhenSuccessful() {
         RefreshToken expectedToken = createRefreshToken();
 
-        UserMachineDetails userMachineDetails = UserMachineDetails
-                .builder()
-                .operatingSystem(RefreshTokenCreator.OPERATING_SYSTEM)
-                .ipAddress(RefreshTokenCreator.ID_ADDRESS)
-                .browser(RefreshTokenCreator.BROWSER)
-                .build();
-
-        RefreshToken savedRefreshToken = refreshTokenService.create(UUID.randomUUID(), userMachineDetails);
+        RefreshToken savedRefreshToken = refreshTokenService.create(UUID.randomUUID(), createUserMachineDetails());
 
         assertThat(savedRefreshToken).isEqualTo(expectedToken);
     }
