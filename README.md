@@ -58,7 +58,7 @@ app:
 
 ## 🌐 Authentication Flow
 
-<img width="1648" alt="jwt-authentication-flow" src="https://user-images.githubusercontent.com/59753526/190870666-8b4387b4-3e9c-4371-bf2b-4bd9f25c9a52.png">
+<img width="1648" alt="JWT Authentication Flow" src="https://user-images.githubusercontent.com/59753526/190884844-764e5af1-1894-4573-b689-c2f3c11331a7.png">
 
 ## :rocket: Technologies
 
