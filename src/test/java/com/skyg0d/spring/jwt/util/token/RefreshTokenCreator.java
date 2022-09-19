@@ -2,6 +2,7 @@ package com.skyg0d.spring.jwt.util.token;
 
 import com.skyg0d.spring.jwt.model.RefreshToken;
 import com.skyg0d.spring.jwt.model.User;
+import com.skyg0d.spring.jwt.payload.response.UserTokenResponse;
 import com.skyg0d.spring.jwt.util.user.UserCreator;
 
 import java.time.Instant;
@@ -38,6 +39,18 @@ public class RefreshTokenCreator {
                 .token(TOKEN)
                 .expiryDate(EXPIRY_DATE)
                 .user(USER)
+                .browser(BROWSER)
+                .operatingSystem(OPERATING_SYSTEM)
+                .ipAddress(ID_ADDRESS)
+                .build();
+    }
+
+    public static UserTokenResponse createUserTokenResponse() {
+        return UserTokenResponse
+                .builder()
+                .id(ID.toString())
+                .token(TOKEN)
+                .expiryDate(EXPIRY_DATE)
                 .browser(BROWSER)
                 .operatingSystem(OPERATING_SYSTEM)
                 .ipAddress(ID_ADDRESS)

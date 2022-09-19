@@ -3,6 +3,7 @@ package com.skyg0d.spring.jwt.util.user;
 import com.skyg0d.spring.jwt.model.ERole;
 import com.skyg0d.spring.jwt.model.Role;
 import com.skyg0d.spring.jwt.model.User;
+import com.skyg0d.spring.jwt.payload.request.PromoteRequest;
 
 import java.util.Set;
 import java.util.UUID;
@@ -33,6 +34,14 @@ public class UserCreator {
                 .email(EMAIL)
                 .password(PASSWORD)
                 .roles(ROLES)
+                .build();
+    }
+
+    public static PromoteRequest createPromoteRequest() {
+        return PromoteRequest
+                .builder()
+                .userId(ID.toString())
+                .roles(Set.of("admin"))
                 .build();
     }
 
