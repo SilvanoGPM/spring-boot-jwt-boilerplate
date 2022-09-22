@@ -123,7 +123,7 @@ public class AuthServiceTest {
     void signUp_PersistsUser_WhenSuccessful() {
         String expectedMessage = "User registered successfully!";
 
-        MessageResponse messageResponse = authService.singUp(createSignupRequest());
+        MessageResponse messageResponse = authService.signUp(createSignupRequest());
 
         assertThat(messageResponse).isNotNull();
 
@@ -138,7 +138,7 @@ public class AuthServiceTest {
                 .thenReturn(true);
 
         assertThatExceptionOfType(UserAlreadyExistsException.class)
-                .isThrownBy(() -> authService.singUp(createSignupRequest()));
+                .isThrownBy(() -> authService.signUp(createSignupRequest()));
     }
 
     @Test

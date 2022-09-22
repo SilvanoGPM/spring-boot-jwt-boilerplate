@@ -18,12 +18,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.security.Principal;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -62,7 +61,7 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "When server error")
     })
     public ResponseEntity<MessageResponse> signUp(@Valid @RequestBody SignupRequest signUpRequest) {
-        return new ResponseEntity<>(authService.singUp(signUpRequest), HttpStatus.CREATED);
+        return new ResponseEntity<>(authService.signUp(signUpRequest), HttpStatus.CREATED);
     }
 
     @PostMapping("/refresh")
@@ -83,12 +82,17 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "When user not logged in"),
             @ApiResponse(responseCode = "500", description = "When server error")
     })
-    public ResponseEntity<MessageResponse> logout(Principal principal) {
+    public ResponseEntity<MessageResponse> logout() {
+        Object principal = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
         if (principal == null) {
             throw new BadRequestException("You are not logged in.");
         }
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+        UserDetailsImpl userDetails = (UserDetailsImpl) principal;
 
         return ResponseEntity.ok(authService.logout(userDetails.getId()));
     }

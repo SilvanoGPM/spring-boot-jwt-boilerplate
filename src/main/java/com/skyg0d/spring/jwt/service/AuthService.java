@@ -71,7 +71,7 @@ public class AuthService {
                 .build();
     }
 
-    public MessageResponse singUp(SignupRequest signUpRequest) {
+    public MessageResponse signUp(SignupRequest signUpRequest) {
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             throw new UserAlreadyExistsException(signUpRequest.getEmail());
         }
