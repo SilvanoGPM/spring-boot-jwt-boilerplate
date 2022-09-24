@@ -7,8 +7,8 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Builder
-@ToString
 public class JwtResponse {
 
     @Schema(description = "Token to access protected endpoints")

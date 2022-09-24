@@ -3,3 +3,9 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: create
+
+app:
+  jwt:
+    secret: secretkey
+    expirationMs: 6000000
+    refreshExpirationMs: 1200000000
