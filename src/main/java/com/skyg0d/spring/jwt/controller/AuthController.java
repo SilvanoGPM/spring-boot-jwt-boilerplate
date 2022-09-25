@@ -18,6 +18,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -83,12 +85,10 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "When server error")
     })
     public ResponseEntity<MessageResponse> logout() {
-        Object principal = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
 
-        if (principal == null) {
+        if (authentication instanceof AnonymousAuthenticationToken || principal == null) {
             throw new BadRequestException("You are not logged in.");
         }
 

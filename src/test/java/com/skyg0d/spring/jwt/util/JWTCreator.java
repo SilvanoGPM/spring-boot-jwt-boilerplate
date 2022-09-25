@@ -60,6 +60,10 @@ public class JWTCreator {
         this.userRepository = userRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
 
+        persistUsers(roleRepository, userRepository);
+    }
+
+    public void persistUsers(RoleRepository roleRepository, UserRepository userRepository) {
         Role adminRole = roleRepository.save(new Role(ERole.ROLE_ADMIN));
         Role modRole = roleRepository.save(new Role(ERole.ROLE_MODERATOR));
         Role userRole = roleRepository.save(new Role(ERole.ROLE_USER));
