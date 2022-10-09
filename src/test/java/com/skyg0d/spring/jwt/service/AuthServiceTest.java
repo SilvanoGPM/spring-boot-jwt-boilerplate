@@ -99,7 +99,7 @@ public class AuthServiceTest {
                 .thenReturn(createRefreshToken());
 
         BDDMockito
-                .when(jwtUtils.generateTokenFromUsername(ArgumentMatchers.anyString()))
+                .when(jwtUtils.generateTokenFromEmail(ArgumentMatchers.anyString()))
                 .thenReturn(TOKEN);
 
         BDDMockito

@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,10 +28,11 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
         final Map<String, Object> body = new HashMap<>();
 
         body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-        body.put("error", "Unauthorized");
-        body.put("message", authException.getMessage());
-        body.put("path", request.getServletPath());
-
+        body.put("title", "Unauthorized");
+        body.put("details", authException.getMessage());
+        body.put("developerMessage", authException.getClass().getName());
+        body.put("timestamp", LocalDateTime.now().toString());
+        
         final ObjectMapper mapper = new ObjectMapper();
 
         mapper.writeValue(response.getOutputStream(), body);

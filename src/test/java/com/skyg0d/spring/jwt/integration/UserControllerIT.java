@@ -66,7 +66,7 @@ public class UserControllerIT {
     void listAllTokens_ReturnsListOfRefreshTokensInsidePageObject_WhenSuccessful() {
         RefreshToken refreshToken = createRefreshToken();
 
-        refreshToken.setUser(findUserByUsername("User"));
+        refreshToken.setUser(findUserByEmail("user@mail.com"));
 
         RefreshToken expectedRefreshToken = refreshTokenRepository.save(refreshToken);
 
@@ -91,7 +91,7 @@ public class UserControllerIT {
     void listMyAllTokens_ReturnsListOfRefreshTokensInsidePageObject_WhenSuccessful() {
         RefreshToken refreshToken = createRefreshToken();
 
-        refreshToken.setUser(findUserByUsername("Admin"));
+        refreshToken.setUser(findUserByEmail("admin@mail.com"));
 
         RefreshToken expectedRefreshToken = refreshTokenRepository.save(refreshToken);
 
@@ -125,7 +125,7 @@ public class UserControllerIT {
         PromoteRequest promoteRequest = PromoteRequest
                 .builder()
                 .roles(Set.of("mod"))
-                .userId(findUserByUsername("User").getId().toString())
+                .userId(findUserByEmail("user@mail.com").getId().toString())
                 .build();
 
         ResponseEntity<MessageResponse> entity = httpClient.exchange(
@@ -149,7 +149,7 @@ public class UserControllerIT {
     void logout_RemovesRefreshToken_WhenSuccessful() {
         String expectedMessage = "Log out successful";
 
-        String userId = findUserByUsername("User").getId().toString();
+        String userId = findUserByEmail("user@mail.com").getId().toString();
 
         ResponseEntity<MessageResponse> entity = httpClient.exchange(
                 "/users/logout/{userId}",
@@ -168,9 +168,9 @@ public class UserControllerIT {
         assertThat(entity.getBody().getMessage()).isEqualTo(expectedMessage);
     }
 
-    private User findUserByUsername(String username) throws RuntimeException {
+    private User findUserByEmail(String email) throws RuntimeException {
         return userRepository
-                .findByUsername(username)
+                .findByEmail(email)
                 .orElseThrow(RuntimeException::new);
     }
 

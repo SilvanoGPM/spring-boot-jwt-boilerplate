@@ -80,15 +80,15 @@ public class JWTCreator {
     }
 
     public <T> HttpEntity<T> createAdminAuthEntity(T t) {
-        return createAuthEntity(t, new LoginRequest("Admin", "password"));
+        return createAuthEntity(t, new LoginRequest("admin@mail.com", "password"));
     }
 
     public <T> HttpEntity<T> createModeratorAuthEntity(T t) {
-        return createAuthEntity(t, new LoginRequest("Moderator", "password"));
+        return createAuthEntity(t, new LoginRequest("mod@mail.com", "password"));
     }
 
     public <T> HttpEntity<T> createUserAuthEntity(T t) {
-        return createAuthEntity(t, new LoginRequest("User", "password"));
+        return createAuthEntity(t, new LoginRequest("user@mail.com", "password"));
     }
 
     public <T> HttpEntity<T> createAuthEntity(T t, LoginRequest login) {

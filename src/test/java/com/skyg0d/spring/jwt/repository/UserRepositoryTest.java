@@ -23,21 +23,21 @@ public class UserRepositoryTest {
     RoleRepository roleRepository;
 
     @Test
-    @DisplayName("findByUsername returns user when successful")
-    void findByUsername_ReturnsUser_WhenSuccessful() {
+    @DisplayName("findByEmail returns user when successful")
+    void findByEmail_ReturnsUser_WhenSuccessful() {
         User userToBeSave = createUserToBeSave();
 
         userToBeSave.setRoles(new HashSet<>(roleRepository.saveAll(userToBeSave.getRoles())));
 
         userRepository.save(userToBeSave);
 
-        Optional<User> userFound = userRepository.findByUsername(createUserToBeSave().getUsername());
+        Optional<User> userFound = userRepository.findByEmail(createUserToBeSave().getEmail());
 
         assertThat(userFound).isNotEmpty();
 
         assertThat(userFound.get()).isNotNull();
 
-        assertThat(userFound.get().getUsername()).isEqualTo(createUserToBeSave().getUsername());
+        assertThat(userFound.get().getEmail()).isEqualTo(createUserToBeSave().getEmail());
     }
 
     @Test

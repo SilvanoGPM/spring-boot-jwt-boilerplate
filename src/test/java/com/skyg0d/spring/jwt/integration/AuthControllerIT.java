@@ -51,7 +51,7 @@ public class AuthControllerIT {
     void signIn_ReturnsJwtResponse_WhenSuccessful() {
         LoginRequest login = LoginRequest
                 .builder()
-                .username("Admin")
+                .email("admin@mail.com")
                 .password("password")
                 .build();
 
@@ -98,7 +98,7 @@ public class AuthControllerIT {
     void refreshToken_ReturnsTokenRefresh_WhenSuccessful() {
         jwtCreator.createAdminAuthEntity(null);
 
-        String token = getUserToken("Admin");
+        String token = getUserToken("admin@mail.com");
 
         TokenRefreshRequest request = TokenRefreshRequest
                 .builder()
@@ -156,14 +156,14 @@ public class AuthControllerIT {
         assertThat(entity.getBody().getDetails()).isEqualTo("You are not logged in.");
     }
 
-    private String getUserToken(String username) {
-        Page<RefreshToken> allByUser = tokenRepository.findAllByUser(PageRequest.of(0, 1), findUserByUsername(username));
+    private String getUserToken(String email) {
+        Page<RefreshToken> allByUser = tokenRepository.findAllByUser(PageRequest.of(0, 1), findUserByEmail(email));
         return allByUser.getContent().get(0).getToken();
     }
 
-    private User findUserByUsername(String username) throws RuntimeException {
+    private User findUserByEmail(String email) throws RuntimeException {
         return userRepository
-                .findByUsername(username)
+                .findByEmail(email)
                 .orElseThrow(RuntimeException::new);
     }
 
