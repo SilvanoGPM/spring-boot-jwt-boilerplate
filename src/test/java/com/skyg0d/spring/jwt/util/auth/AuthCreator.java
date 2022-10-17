@@ -25,7 +25,7 @@ public class AuthCreator {
     public static LoginRequest createLoginRequest() {
         return LoginRequest
                 .builder()
-                .email(USERNAME)
+                .email(EMAIL)
                 .password(PASSWORD)
                 .build();
     }

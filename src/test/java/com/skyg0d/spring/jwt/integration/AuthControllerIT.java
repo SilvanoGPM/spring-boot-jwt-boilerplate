@@ -26,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
+import static com.skyg0d.spring.jwt.util.auth.AuthCreator.createLoginRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -49,14 +50,10 @@ public class AuthControllerIT {
     @Test
     @DisplayName("signIn Returns JwtResponse When Successful")
     void signIn_ReturnsJwtResponse_WhenSuccessful() {
-        LoginRequest login = LoginRequest
-                .builder()
-                .email("admin@mail.com")
-                .password("password")
-                .build();
+        LoginRequest loginRequest = createLoginRequest();
 
         ResponseEntity<JwtResponse> entity = httpClient
-                .postForEntity("/auth/signin", new HttpEntity<>(login), JwtResponse.class);
+                .postForEntity("/auth/signin", new HttpEntity<>(loginRequest), JwtResponse.class);
 
         assertThat(entity).isNotNull();
 
@@ -64,7 +61,7 @@ public class AuthControllerIT {
 
         assertThat(entity.getBody()).isNotNull();
 
-        assertThat(entity.getBody().getUsername()).isEqualTo("Admin");
+        assertThat(entity.getBody().getEmail()).isEqualTo(loginRequest.getEmail());
     }
 
     @Test
@@ -98,7 +95,7 @@ public class AuthControllerIT {
     void refreshToken_ReturnsTokenRefresh_WhenSuccessful() {
         jwtCreator.createAdminAuthEntity(null);
 
-        String token = getUserToken("admin@mail.com");
+        String token = getAdminToken();
 
         TokenRefreshRequest request = TokenRefreshRequest
                 .builder()
@@ -156,15 +153,13 @@ public class AuthControllerIT {
         assertThat(entity.getBody().getDetails()).isEqualTo("You are not logged in.");
     }
 
-    private String getUserToken(String email) {
-        Page<RefreshToken> allByUser = tokenRepository.findAllByUser(PageRequest.of(0, 1), findUserByEmail(email));
-        return allByUser.getContent().get(0).getToken();
-    }
-
-    private User findUserByEmail(String email) throws RuntimeException {
-        return userRepository
-                .findByEmail(email)
+    private String getAdminToken() throws RuntimeException {
+        User user = userRepository
+                .findByEmail("admin@mail.com")
                 .orElseThrow(RuntimeException::new);
+
+        Page<RefreshToken> allByUser = tokenRepository.findAllByUser(PageRequest.of(0, 1), user);
+        return allByUser.getContent().get(0).getToken();
     }
 
 }
