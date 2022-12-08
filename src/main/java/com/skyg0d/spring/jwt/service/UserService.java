@@ -34,14 +34,12 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
     }
 
-    public MessageResponse promote(UUID userId, Set<String> roles) {
+    public void promote(UUID userId, Set<String> roles) {
         User user = findById(userId);
 
         user.setRoles(getUserRoles(roles));
 
         userRepository.save(user);
-
-        return new MessageResponse("User promoted");
     }
 
     public Set<Role> getUserRoles(Set<String> roles) {

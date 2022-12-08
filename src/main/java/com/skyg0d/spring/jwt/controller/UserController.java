@@ -3,7 +3,6 @@ package com.skyg0d.spring.jwt.controller;
 import com.skyg0d.spring.jwt.model.RefreshToken;
 import com.skyg0d.spring.jwt.model.User;
 import com.skyg0d.spring.jwt.payload.request.PromoteRequest;
-import com.skyg0d.spring.jwt.payload.response.MessageResponse;
 import com.skyg0d.spring.jwt.payload.response.UserTokenResponse;
 import com.skyg0d.spring.jwt.security.service.UserDetailsImpl;
 import com.skyg0d.spring.jwt.service.AuthService;
@@ -15,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -81,28 +81,33 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Promote user to others roles", tags = "Users")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successful"),
+            @ApiResponse(responseCode = "204", description = "Successful"),
             @ApiResponse(responseCode = "400", description = "When user not found"),
             @ApiResponse(responseCode = "401", description = "When not authorized"),
             @ApiResponse(responseCode = "403", description = "When forbidden"),
             @ApiResponse(responseCode = "500", description = "When server error")
     })
-    public ResponseEntity<MessageResponse> promote(@Valid @RequestBody PromoteRequest request) {
-        return ResponseEntity.ok(userService.promote(UUID.fromString(request.getUserId()), request.getRoles()));
+    public ResponseEntity<Void> promote(@Valid @RequestBody PromoteRequest request) {
+        userService.promote(UUID.fromString(request.getUserId()), request.getRoles());
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/logout/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "User logout", tags = "Users")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successful"),
+            @ApiResponse(responseCode = "204", description = "Successful"),
             @ApiResponse(responseCode = "400", description = "When user not found"),
             @ApiResponse(responseCode = "401", description = "When not authorized"),
             @ApiResponse(responseCode = "403", description = "When forbidden"),
             @ApiResponse(responseCode = "500", description = "When server error")
     })
-    public ResponseEntity<MessageResponse> logout(@PathVariable UUID userId) {
-        return ResponseEntity.ok(authService.logout(userId));
+    public ResponseEntity<Void> logout(@PathVariable UUID userId) {
+        authService.logout(userId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
     }
 
 }

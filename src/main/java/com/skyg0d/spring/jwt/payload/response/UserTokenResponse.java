@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class UserTokenResponse {
 
     private String id;
+
     private Instant expiryDate;
     @Schema(description = "Token to generate others access tokens")
     private String token;

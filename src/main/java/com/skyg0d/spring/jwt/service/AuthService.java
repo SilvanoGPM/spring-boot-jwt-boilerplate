@@ -11,7 +11,6 @@ import com.skyg0d.spring.jwt.payload.request.LoginRequest;
 import com.skyg0d.spring.jwt.payload.request.SignupRequest;
 import com.skyg0d.spring.jwt.payload.request.TokenRefreshRequest;
 import com.skyg0d.spring.jwt.payload.response.JwtResponse;
-import com.skyg0d.spring.jwt.payload.response.MessageResponse;
 import com.skyg0d.spring.jwt.payload.response.TokenRefreshResponse;
 import com.skyg0d.spring.jwt.repository.UserRepository;
 import com.skyg0d.spring.jwt.security.jwt.JwtUtils;
@@ -71,7 +70,7 @@ public class AuthService {
                 .build();
     }
 
-    public MessageResponse signUp(SignupRequest signUpRequest) {
+    public User signUp(SignupRequest signUpRequest) {
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             throw new UserAlreadyExistsException(signUpRequest.getEmail());
         }
@@ -86,9 +85,7 @@ public class AuthService {
                 .roles(roles)
                 .build();
 
-        userRepository.save(user);
-
-        return new MessageResponse("User registered successfully!");
+        return userRepository.save(user);
     }
 
     public TokenRefreshResponse refreshToken(TokenRefreshRequest request) {
@@ -104,10 +101,8 @@ public class AuthService {
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
     }
 
-    public MessageResponse logout(UUID userId) {
+    public void logout(UUID userId) {
         refreshTokenService.deleteByUserId(userId);
-
-        return new MessageResponse("Log out successful");
     }
 
 }

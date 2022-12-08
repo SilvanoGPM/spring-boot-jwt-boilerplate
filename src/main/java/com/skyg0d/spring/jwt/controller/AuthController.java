@@ -1,12 +1,12 @@
 package com.skyg0d.spring.jwt.controller;
 
 import com.skyg0d.spring.jwt.exception.BadRequestException;
+import com.skyg0d.spring.jwt.model.User;
 import com.skyg0d.spring.jwt.payload.UserMachineDetails;
 import com.skyg0d.spring.jwt.payload.request.LoginRequest;
 import com.skyg0d.spring.jwt.payload.request.SignupRequest;
 import com.skyg0d.spring.jwt.payload.request.TokenRefreshRequest;
 import com.skyg0d.spring.jwt.payload.response.JwtResponse;
-import com.skyg0d.spring.jwt.payload.response.MessageResponse;
 import com.skyg0d.spring.jwt.payload.response.TokenRefreshResponse;
 import com.skyg0d.spring.jwt.security.service.UserDetailsImpl;
 import com.skyg0d.spring.jwt.service.AuthService;
@@ -62,7 +62,7 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "When email already exists"),
             @ApiResponse(responseCode = "500", description = "When server error")
     })
-    public ResponseEntity<MessageResponse> signUp(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<User> signUp(@Valid @RequestBody SignupRequest signUpRequest) {
         return new ResponseEntity<>(authService.signUp(signUpRequest), HttpStatus.CREATED);
     }
 
@@ -80,11 +80,11 @@ public class AuthController {
     @DeleteMapping("/logout")
     @Operation(summary = "User logout", tags = "Auth")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Successful"),
+            @ApiResponse(responseCode = "204", description = "Successful"),
             @ApiResponse(responseCode = "400", description = "When user not logged in"),
             @ApiResponse(responseCode = "500", description = "When server error")
     })
-    public ResponseEntity<MessageResponse> logout() {
+    public ResponseEntity<Void> logout() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
 
@@ -94,7 +94,9 @@ public class AuthController {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) principal;
 
-        return ResponseEntity.ok(authService.logout(userDetails.getId()));
+        authService.logout(userDetails.getId());
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
