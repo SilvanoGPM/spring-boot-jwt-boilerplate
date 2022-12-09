@@ -7,7 +7,6 @@ import com.skyg0d.spring.jwt.payload.request.LoginRequest;
 import com.skyg0d.spring.jwt.payload.request.SignupRequest;
 import com.skyg0d.spring.jwt.payload.request.TokenRefreshRequest;
 import com.skyg0d.spring.jwt.payload.response.JwtResponse;
-import com.skyg0d.spring.jwt.payload.response.MessageResponse;
 import com.skyg0d.spring.jwt.payload.response.TokenRefreshResponse;
 import com.skyg0d.spring.jwt.repository.RefreshTokenRepository;
 import com.skyg0d.spring.jwt.repository.UserRepository;
@@ -27,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static com.skyg0d.spring.jwt.util.auth.AuthCreator.createLoginRequest;
+import static com.skyg0d.spring.jwt.util.auth.AuthCreator.createSignupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -50,10 +50,14 @@ public class AuthControllerIT {
     @Test
     @DisplayName("signIn Returns JwtResponse When Successful")
     void signIn_ReturnsJwtResponse_WhenSuccessful() {
-        LoginRequest loginRequest = createLoginRequest();
+        LoginRequest login = LoginRequest
+                .builder()
+                .email("admin@mail.com")
+                .password("password")
+                .build();
 
         ResponseEntity<JwtResponse> entity = httpClient
-                .postForEntity("/auth/signin", new HttpEntity<>(loginRequest), JwtResponse.class);
+                .postForEntity("/auth/signin", new HttpEntity<>(login), JwtResponse.class);
 
         assertThat(entity).isNotNull();
 
@@ -61,23 +65,16 @@ public class AuthControllerIT {
 
         assertThat(entity.getBody()).isNotNull();
 
-        assertThat(entity.getBody().getEmail()).isEqualTo(loginRequest.getEmail());
+        assertThat(entity.getBody().getUsername()).isEqualTo("Admin");
     }
 
     @Test
     @DisplayName("signUp_SaveUser_WhenSuccessful")
     void signUp_SaveUser_WhenSuccessful() {
-        String expectedMessage = "User registered successfully!";
+        SignupRequest signup = createSignupRequest();
 
-        SignupRequest signup = SignupRequest
-                .builder()
-                .email("some@mail.com")
-                .password("password")
-                .username("username")
-                .build();
-
-        ResponseEntity<MessageResponse> entity = httpClient
-                .postForEntity("/auth/signup", new HttpEntity<>(signup), MessageResponse.class);
+        ResponseEntity<User> entity = httpClient
+                .postForEntity("/auth/signup", new HttpEntity<>(signup), User.class);
 
         assertThat(entity).isNotNull();
 
@@ -85,9 +82,7 @@ public class AuthControllerIT {
 
         assertThat(entity.getBody()).isNotNull();
 
-        assertThat(entity.getBody()).isNotNull();
-
-        assertThat(entity.getBody().getMessage()).isEqualTo(expectedMessage);
+        assertThat(entity.getBody().getEmail()).isEqualTo(signup.getEmail());
     }
 
     @Test
@@ -116,22 +111,18 @@ public class AuthControllerIT {
     @Test
     @DisplayName("logout Removes Refresh Token When Successful")
     void logout_RemovesRefreshToken_WhenSuccessful() {
-        String expectedMessage = "Log out successful";
-
-        ResponseEntity<MessageResponse> entity = httpClient.exchange(
+        ResponseEntity<Void> entity = httpClient.exchange(
                 "/auth/logout",
                 HttpMethod.DELETE,
                 jwtCreator.createAdminAuthEntity(null),
-                MessageResponse.class
+                Void.class
         );
 
         assertThat(entity).isNotNull();
 
-        assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
-        assertThat(entity.getBody()).isNotNull();
-
-        assertThat(entity.getBody().getMessage()).isEqualTo(expectedMessage);
+        assertThat(entity.getBody()).isNull();
     }
 
     @Test

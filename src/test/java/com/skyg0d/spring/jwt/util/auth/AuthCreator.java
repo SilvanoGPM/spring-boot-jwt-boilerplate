@@ -15,7 +15,7 @@ public class AuthCreator {
 
     public static final String USERNAME = "username";
 
-    public static final String EMAIL = "user@mail.com";
+    public static final String EMAIL = "test@mail.com";
 
     public static final String PASSWORD = "password";
     public static final String TOKEN = "token-test";

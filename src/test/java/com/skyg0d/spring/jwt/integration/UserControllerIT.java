@@ -120,52 +120,44 @@ public class UserControllerIT {
     @Test
     @DisplayName("promote Updates User Roles When Successful")
     void promote_UpdatesUserRoles_WhenSuccessful() {
-        String expectedMessage = "User promoted";
-
         PromoteRequest promoteRequest = PromoteRequest
                 .builder()
                 .roles(Set.of("mod"))
                 .userId(findUserByEmail("user@mail.com").getId().toString())
                 .build();
 
-        ResponseEntity<MessageResponse> entity = httpClient.exchange(
+        ResponseEntity<Void> entity = httpClient.exchange(
                 "/users/promote",
                 HttpMethod.PATCH,
                 jwtCreator.createAdminAuthEntity(promoteRequest),
-                MessageResponse.class
+                Void.class
         );
 
         assertThat(entity).isNotNull();
 
-        assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
-        assertThat(entity.getBody()).isNotNull();
-
-        assertThat(entity.getBody().getMessage()).isEqualTo(expectedMessage);
+        assertThat(entity.getBody()).isNull();
     }
 
     @Test
     @DisplayName("logout Removes Refresh Token When Successful")
     void logout_RemovesRefreshToken_WhenSuccessful() {
-        String expectedMessage = "Log out successful";
-
         String userId = findUserByEmail("user@mail.com").getId().toString();
 
-        ResponseEntity<MessageResponse> entity = httpClient.exchange(
+        ResponseEntity<Void> entity = httpClient.exchange(
                 "/users/logout/{userId}",
                 HttpMethod.DELETE,
                 jwtCreator.createAdminAuthEntity(null),
-                MessageResponse.class,
+                Void.class,
                 userId
         );
 
         assertThat(entity).isNotNull();
 
-        assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
-        assertThat(entity.getBody()).isNotNull();
-
-        assertThat(entity.getBody().getMessage()).isEqualTo(expectedMessage);
+        assertThat(entity.getBody()).isNull();
     }
 
     private User findUserByEmail(String email) throws RuntimeException {

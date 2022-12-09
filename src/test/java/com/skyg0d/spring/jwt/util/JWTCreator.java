@@ -28,6 +28,14 @@ public class JWTCreator {
     @Autowired
     final UserRepository userRepository;
 
+    public JWTCreator(TestRestTemplate testRestTemplate, UserRepository userRepository, RoleRepository roleRepository) {
+        this.testRestTemplate = testRestTemplate;
+        this.userRepository = userRepository;
+        this.passwordEncoder = new BCryptPasswordEncoder();
+
+        persistUsers(roleRepository, userRepository);
+    }
+
     public User createUser() {
         return User
                 .builder()
@@ -53,14 +61,6 @@ public class JWTCreator {
                 .email("admin@mail.com")
                 .password(passwordEncoder.encode("password"))
                 .build();
-    }
-
-    public JWTCreator(TestRestTemplate testRestTemplate, UserRepository userRepository, RoleRepository roleRepository) {
-        this.testRestTemplate = testRestTemplate;
-        this.userRepository = userRepository;
-        this.passwordEncoder = new BCryptPasswordEncoder();
-
-        persistUsers(roleRepository, userRepository);
     }
 
     public void persistUsers(RoleRepository roleRepository, UserRepository userRepository) {

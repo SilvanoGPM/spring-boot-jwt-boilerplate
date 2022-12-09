@@ -2,7 +2,6 @@ package com.skyg0d.spring.jwt.controller;
 
 import com.skyg0d.spring.jwt.model.RefreshToken;
 import com.skyg0d.spring.jwt.model.User;
-import com.skyg0d.spring.jwt.payload.response.MessageResponse;
 import com.skyg0d.spring.jwt.payload.response.UserTokenResponse;
 import com.skyg0d.spring.jwt.service.AuthService;
 import com.skyg0d.spring.jwt.service.RefreshTokenService;
@@ -76,12 +75,14 @@ public class UserControllerTest {
                 .thenReturn(userRefreshTokensPage);
 
         BDDMockito
-                .when(userService.promote(ArgumentMatchers.any(UUID.class), ArgumentMatchers.any()))
-                .thenReturn(new MessageResponse("User promoted"));
+                .doNothing()
+                .when(userService)
+                .promote(ArgumentMatchers.any(UUID.class), ArgumentMatchers.any());
 
         BDDMockito
-                .when(authService.logout(ArgumentMatchers.any(UUID.class)))
-                .thenReturn(new MessageResponse("Log out successful"));
+                .doNothing()
+                .when(authService)
+                .logout(ArgumentMatchers.any(UUID.class));
     }
 
     @Test
@@ -145,33 +146,25 @@ public class UserControllerTest {
     @Test
     @DisplayName("promote Updates User Roles When Successful")
     void promote_UpdatesUserRoles_WhenSuccessful() {
-        String expectedMessage = "User promoted";
-
-        ResponseEntity<MessageResponse> entity = userController.promote(createPromoteRequest());
+        ResponseEntity<Void> entity = userController.promote(createPromoteRequest());
 
         assertThat(entity).isNotNull();
 
-        assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
-        assertThat(entity.getBody()).isNotNull();
-
-        assertThat(entity.getBody().getMessage()).isEqualTo(expectedMessage);
+        assertThat(entity.getBody()).isNull();
     }
 
     @Test
     @DisplayName("logout Removes Refresh Token When Successful")
     void logout_RemovesRefreshToken_WhenSuccessful() {
-        String expectedMessage = "Log out successful";
-
-        ResponseEntity<MessageResponse> entity = userController.logout(UUID.randomUUID());
+        ResponseEntity<Void> entity = userController.logout(UUID.randomUUID());
 
         assertThat(entity).isNotNull();
 
-        assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
-        assertThat(entity.getBody()).isNotNull();
-
-        assertThat(entity.getBody().getMessage()).isEqualTo(expectedMessage);
+        assertThat(entity.getBody()).isNull();
     }
 
 }

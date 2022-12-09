@@ -1,12 +1,12 @@
 package com.skyg0d.spring.jwt.controller;
 
 import com.skyg0d.spring.jwt.exception.BadRequestException;
+import com.skyg0d.spring.jwt.model.User;
 import com.skyg0d.spring.jwt.payload.UserMachineDetails;
 import com.skyg0d.spring.jwt.payload.request.LoginRequest;
 import com.skyg0d.spring.jwt.payload.request.SignupRequest;
 import com.skyg0d.spring.jwt.payload.request.TokenRefreshRequest;
 import com.skyg0d.spring.jwt.payload.response.JwtResponse;
-import com.skyg0d.spring.jwt.payload.response.MessageResponse;
 import com.skyg0d.spring.jwt.payload.response.TokenRefreshResponse;
 import com.skyg0d.spring.jwt.service.AuthService;
 import com.skyg0d.spring.jwt.util.MockUtils;
@@ -14,16 +14,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.ArgumentMatchers;
+import org.mockito.BDDMockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.UUID;
 
 import static com.skyg0d.spring.jwt.util.auth.AuthCreator.*;
+import static com.skyg0d.spring.jwt.util.user.UserCreator.createUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -45,15 +48,16 @@ public class AuthControllerTest {
 
         BDDMockito
                 .when(authService.signUp(ArgumentMatchers.any(SignupRequest.class)))
-                .thenReturn(new MessageResponse("User registered successfully!"));
+                .thenReturn(createUser());
 
         BDDMockito
                 .when(authService.refreshToken(ArgumentMatchers.any(TokenRefreshRequest.class)))
                 .thenReturn(createTokenRefreshResponse());
 
         BDDMockito
-                .when(authService.logout(ArgumentMatchers.any(UUID.class)))
-                .thenReturn(new MessageResponse("Log out successful"));
+                .doNothing()
+                .when(authService)
+                .logout(ArgumentMatchers.any(UUID.class));
     }
 
     @Test
@@ -79,9 +83,9 @@ public class AuthControllerTest {
     @Test
     @DisplayName("signUp_SaveUser_WhenSuccessful")
     void signUp_SaveUser_WhenSuccessful() {
-        String expectedMessage = "User registered successfully!";
+        SignupRequest expectedUser = createSignupRequest();
 
-        ResponseEntity<MessageResponse> entity = authController.signUp(createSignupRequest());
+        ResponseEntity<User> entity = authController.signUp(expectedUser);
 
         assertThat(entity).isNotNull();
 
@@ -89,9 +93,7 @@ public class AuthControllerTest {
 
         assertThat(entity.getBody()).isNotNull();
 
-        assertThat(entity.getBody()).isNotNull();
-
-        assertThat(entity.getBody().getMessage()).isEqualTo(expectedMessage);
+        assertThat(entity.getBody().getEmail()).isEqualTo(expectedUser.getEmail());
     }
 
     @Test
@@ -115,19 +117,15 @@ public class AuthControllerTest {
     @Test
     @DisplayName("logout Removes Refresh Token When Successful")
     void logout_RemovesRefreshToken_WhenSuccessful() {
-        String expectedMessage = "Log out successful";
-
         MockUtils.mockSecurityContextHolder();
 
-        ResponseEntity<MessageResponse> entity = authController.logout();
+        ResponseEntity<Void> entity = authController.logout();
 
         assertThat(entity).isNotNull();
 
-        assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
-        assertThat(entity.getBody()).isNotNull();
-
-        assertThat(entity.getBody().getMessage()).isEqualTo(expectedMessage);
+        assertThat(entity.getBody()).isNull();
     }
 
     @Test

@@ -4,9 +4,10 @@ import com.skyg0d.spring.jwt.exception.TokenRefreshException;
 import com.skyg0d.spring.jwt.exception.UserAlreadyExistsException;
 import com.skyg0d.spring.jwt.model.ERole;
 import com.skyg0d.spring.jwt.model.RefreshToken;
+import com.skyg0d.spring.jwt.model.User;
 import com.skyg0d.spring.jwt.payload.UserMachineDetails;
+import com.skyg0d.spring.jwt.payload.request.SignupRequest;
 import com.skyg0d.spring.jwt.payload.response.JwtResponse;
-import com.skyg0d.spring.jwt.payload.response.MessageResponse;
 import com.skyg0d.spring.jwt.payload.response.TokenRefreshResponse;
 import com.skyg0d.spring.jwt.repository.UserRepository;
 import com.skyg0d.spring.jwt.security.jwt.JwtUtils;
@@ -30,8 +31,8 @@ import static com.skyg0d.spring.jwt.util.auth.AuthCreator.*;
 import static com.skyg0d.spring.jwt.util.auth.UserDetailsImplCreator.createUserDetails;
 import static com.skyg0d.spring.jwt.util.role.RoleCreator.createRole;
 import static com.skyg0d.spring.jwt.util.token.RefreshTokenCreator.createRefreshToken;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static com.skyg0d.spring.jwt.util.user.UserCreator.createUser;
+import static org.assertj.core.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @DisplayName("Tests for AuthService")
@@ -73,6 +74,10 @@ public class AuthServiceTest {
         BDDMockito
                 .when(jwtUtils.generateJwtToken(ArgumentMatchers.any(UserDetailsImpl.class)))
                 .thenReturn(AuthCreator.TOKEN);
+
+        BDDMockito
+                .when(userRepository.save(ArgumentMatchers.any(User.class)))
+                .thenReturn(createUser());
 
         BDDMockito
                 .when(refreshTokenService.create(ArgumentMatchers.any(UUID.class), ArgumentMatchers.any(UserMachineDetails.class)))
@@ -121,13 +126,13 @@ public class AuthServiceTest {
     @Test
     @DisplayName("signUp Persists User When Successful")
     void signUp_PersistsUser_WhenSuccessful() {
-        String expectedMessage = "User registered successfully!";
+        SignupRequest expectedUser = createSignupRequest();
 
-        MessageResponse messageResponse = authService.signUp(createSignupRequest());
+        User userCreated = authService.signUp(expectedUser);
 
-        assertThat(messageResponse).isNotNull();
+        assertThat(userCreated).isNotNull();
 
-        assertThat(messageResponse.getMessage()).isEqualTo(expectedMessage);
+        assertThat(userCreated.getEmail()).isEqualTo(expectedUser.getEmail());
     }
 
     @Test
@@ -169,13 +174,8 @@ public class AuthServiceTest {
     @Test
     @DisplayName("logout Removes Refresh Token When Successful")
     void logout_RemovesRefreshToken_WhenSuccessful() {
-        String expectedMessage = "Log out successful";
-
-        MessageResponse messageResponse = authService.logout(UUID.randomUUID());
-
-        assertThat(messageResponse).isNotNull();
-
-        assertThat(messageResponse.getMessage()).isEqualTo(expectedMessage);
+        assertThatCode(() -> authService.logout(UUID.randomUUID()))
+                .doesNotThrowAnyException();
     }
 
 }
